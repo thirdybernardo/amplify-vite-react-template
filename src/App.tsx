@@ -15,23 +15,12 @@ function App() {
     });
   }, []);
 
-  /*   function createTodo() {
+  function createTodo() {
     client.models.Todo.create({ content: window.prompt('Todo content') });
-  } */
+  }
 
   function deleteTodo(id: string) {
     client.models.Todo.delete({ id });
-  }
-  function createTodo() {
-    const name = window.prompt('Enter a name for the todo:');
-    const content = window.prompt('Enter the todo content:');
-
-    if (!name || !content) {
-      alert('Both name and content are required!');
-      return;
-    }
-
-    client.models.Todo.create({ name, content });
   }
 
   return (
