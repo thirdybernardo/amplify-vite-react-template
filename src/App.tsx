@@ -30,7 +30,7 @@ function App() {
       <ul>
         {todos.map((todo) => (
           <li key={todo.id} onClick={() => deleteTodo(todo.id)}>
-            <strong>{todo.name}</strong>: {todo.content}
+            <strong>name</strong>: {todo.content}
           </li>
         ))}
       </ul>
