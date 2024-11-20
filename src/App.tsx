@@ -28,8 +28,6 @@ function App() {
     }
 
     client.models.Todo.create({ name, content });
-
-    alert('Todo created successfully!');
   }
 
   return (
