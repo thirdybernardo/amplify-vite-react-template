@@ -27,10 +27,8 @@ function App() {
       return;
     }
 
-    client.models.Todo.create({
-      name: window.prompt('Enter a name for the todo:'),
-      content: window.prompt('Enter the todo content:'),
-    });
+    client.models.Todo.create({ name, content });
+
     alert('Todo created successfully!');
   }
 
