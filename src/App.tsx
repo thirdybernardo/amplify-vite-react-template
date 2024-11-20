@@ -15,8 +15,23 @@ function App() {
     });
   }, []);
 
-  function createTodo() {
+  /*   function createTodo() {
     client.models.Todo.create({ content: window.prompt('Todo content') });
+  } */
+  function createTodo() {
+    const name = window.prompt('Enter a name for the todo:');
+    const content = window.prompt('Enter the todo content:');
+
+    if (!name || !content) {
+      alert('Both name and content are required!');
+      return;
+    }
+
+    client.models.Todo.create({
+      name: window.prompt('Enter a name for the todo:'),
+      content: window.prompt('Enter the todo content:'),
+    });
+    alert('Todo created successfully!');
   }
 
   return (
@@ -25,7 +40,9 @@ function App() {
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
+          <li key={todo.id}>
+            <strong>{todo.name}</strong>: {todo.content}
+          </li>
         ))}
       </ul>
       <div>

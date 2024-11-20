@@ -10,6 +10,7 @@ const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      name: a.string(), // Add the new "name" field here
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
