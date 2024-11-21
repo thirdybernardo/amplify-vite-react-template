@@ -8,30 +8,48 @@ const client = generateClient<Schema>();
 function App() {
   const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([]);
   const { user, signOut } = useAuthenticator();
+  useEffect(() => {
+    console.log('User object:', user);
+  }, [user]); // Runs whenever the `user` object updates
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
+    const sub = client.models.Todo.observeQuery().subscribe({
+      next: ({ items }) => {
+        setTodos([...items]);
+      },
     });
+
+    return () => sub.unsubscribe();
   }, []);
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt('Todo content') });
-  }
+  const createTodo = async () => {
+    await client.models.Todo.create({
+      content: window.prompt('Todo content?'),
+      isDone: false,
+    });
+    // no more manual refetchTodos required!
+    // - fetchTodos()
+  };
+  const fetchTodos = async () => {
+    const { data: items } = await client.models.Todo.list();
+    setTodos(items);
+  };
 
-  function deleteTodo(id: string) {
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  /*  function deleteTodo(id: string) {
     client.models.Todo.delete({ id });
-  }
+  } */
 
   return (
     <main>
       <h1>My todos</h1>
       <button onClick={createTodo}>+ new</button>
       <ul>
-        {todos.map((todo) => (
-          <li key={todo.id} onClick={() => deleteTodo(todo.id)}>
-            <strong>name</strong>: {todo.content}
-          </li>
+        {todos.map(({ id, content }) => (
+          <li key={id}>{content}</li>
         ))}
       </ul>
       <div>
