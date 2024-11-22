@@ -8,48 +8,39 @@ const client = generateClient<Schema>();
 function App() {
   const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([]);
   const { user, signOut } = useAuthenticator();
-  useEffect(() => {
-    console.log('User object:', user);
-  }, [user]); // Runs whenever the `user` object updates
 
-  useEffect(() => {
-    const sub = client.models.Todo.observeQuery().subscribe({
-      next: ({ items }) => {
-        setTodos([...items]);
-      },
-    });
-
-    return () => sub.unsubscribe();
-  }, []);
-
-  const createTodo = async () => {
-    await client.models.Todo.create({
-      content: window.prompt('Todo content?'),
-      isDone: false,
-    });
-    // no more manual refetchTodos required!
-    // - fetchTodos()
-  };
+  // Fetch todos from API
   const fetchTodos = async () => {
-    const { data: items } = await client.models.Todo.list();
-    setTodos(items);
+    try {
+      const { data: todos, errors } = await client.models.Todo.list();
+      if (errors) {
+        console.error('Error fetching todos:', errors);
+      } else {
+        setTodos(todos);
+      }
+    } catch (error) {
+      console.error('Failed to fetch todos:', error);
+    }
   };
 
+  // Fetch todos when the component mounts
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, []); // Empty dependency array means this runs once after the initial render
 
-  /*  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id });
-  } */
+  function createTodo() {
+    client.models.Todo.create({ content: window.prompt('Todo content') })
+      .then(() => fetchTodos()) // Re-fetch todos after creation
+      .catch((error) => console.error('Error creating todo:', error));
+  }
 
   return (
     <main>
       <h1>My todos</h1>
       <button onClick={createTodo}>+ new</button>
       <ul>
-        {todos.map(({ id, content }) => (
-          <li key={id}>{content}</li>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.content}</li>
         ))}
       </ul>
       <div>
