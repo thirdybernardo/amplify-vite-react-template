@@ -7,13 +7,7 @@ const schema = a.schema({
       isDone: a.boolean(),
       owner: a.string(),
     })
-    .authorization((allow) => [
-      // Allow anyone auth'd with an API key to read everyone's posts.
-      allow.publicApiKey().to(['read']),
-      // Allow signed-in user to create, read, update,
-      // and delete their __OWN__ posts.
-      allow.owner(),
-    ]),
+    .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
 });
 
 // Used for code completion / highlighting when making requests from frontend
