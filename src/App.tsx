@@ -28,11 +28,56 @@ function App() {
     fetchTodos();
   }, []); // Empty dependency array means this runs once after the initial render
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt('Todo content') })
-      .then(() => fetchTodos()) // Re-fetch todos after creation
-      .catch((error) => console.error('Error creating todo:', error));
-  }
+  const createTodo = async () => {
+    const content = window.prompt('Enter todo content:');
+    if (!content) {
+      alert('Todo content cannot be empty.');
+      return;
+    }
+
+    try {
+      await client.models.Todo.create({
+        content,
+        isDone: false,
+        owner: user.username, // Associate todo with the logged-in user
+      });
+      alert('Todo created successfully!');
+    } catch (error) {
+      console.error('Error creating todo:', error);
+      alert('Failed to create todo.');
+    }
+  };
+  // Function to update a todo item
+  const updateTodo = (id: string) => {
+    const newContent = window.prompt('Enter new content for the todo:');
+
+    if (!newContent) {
+      alert('Todo content cannot be empty.');
+      return;
+    }
+
+    const todoup: { id: string; content: string } = {
+      id,
+      content: newContent,
+    };
+
+    // Call the API to update the todo item
+    client.models.Todo.update(todoup)
+      .then((updatedTodo) => {
+        // Update the local state with the updated todo
+        console.log('Updated Todo from backend:', updatedTodo);
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === id ? { ...todo, content: newContent } : todo
+          )
+        );
+        alert('Todo updated successfully!');
+      })
+      .catch((error) => {
+        console.error('Error updating todo:', error);
+        alert('Failed to update the todo.');
+      });
+  };
 
   return (
     <main>
@@ -40,7 +85,11 @@ function App() {
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
+          <li key={todo.id}>
+            {todo.content}
+            <button onClick={() => updateTodo(todo.id)}>Update</button>{' '}
+            {/* Update button */}
+          </li>
         ))}
       </ul>
       <div>
