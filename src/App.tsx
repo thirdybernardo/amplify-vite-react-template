@@ -28,6 +28,24 @@ function App() {
     fetchTodos();
   }, []); // Empty dependency array means this runs once after the initial render
 
+  useEffect(() => {
+    const subscription = client.models.Todo.onCreate().subscribe({
+      next: (todoData) => {
+        // No `.data`, directly use `todoData`
+        const newTodo = todoData; // Assuming `todoData` is already the new Todo item
+
+        if (newTodo) {
+          setTodos((prevTodos) => [...prevTodos, newTodo]);
+        }
+      },
+      error: (error) => {
+        console.error('Subscription error:', error);
+      },
+    });
+
+    return () => subscription.unsubscribe(); // Clean up the subscription
+  }, []);
+
   const createTodo = async () => {
     const content = window.prompt('Enter todo content:');
     if (!content) {
@@ -79,6 +97,21 @@ function App() {
       });
   };
 
+  const deleteTodo = async (id: string) => {
+    try {
+      const todoupDelete: { id: string } = {
+        id,
+      };
+      await client.models.Todo.delete(todoupDelete); // Use the ID of the todo to delete
+      // After successful deletion, update the state to remove the deleted todo
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+      alert('Todo deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+      alert('Failed to delete the todo.');
+    }
+  };
+
   return (
     <main>
       <h1>My todos</h1>
@@ -89,6 +122,7 @@ function App() {
             {todo.content}
             <button onClick={() => updateTodo(todo.id)}>Update</button>{' '}
             {/* Update button */}
+            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
           </li>
         ))}
       </ul>
