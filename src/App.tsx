@@ -2,59 +2,33 @@ import { useEffect, useState } from 'react';
 import type { Schema } from '../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
 import { useAuthenticator } from '@aws-amplify/ui-react';
+type Todo = Schema['Todo']['type'];
 
 const client = generateClient<Schema>();
 
 function App() {
-  const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const { user, signOut } = useAuthenticator();
 
-  // Fetch todos from API
-  const fetchTodos = async () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { user } = useAuthenticator(); // Get the logged-in user's info
-
-    try {
-      const { data: todos, errors } = await client.models.Todo.list({
-        filter: {
-          owner: { eq: user.username }, // Only fetch todos that match the logged-in user's username
-        },
-      });
-
-      if (todos) {
-        setTodos(todos);
-      }
-
-      if (errors) {
-        console.error('Errors fetching todos:', errors);
-      }
-    } catch (error) {
-      console.error('Error fetching todos:', error);
-    }
-  };
-
   // Fetch todos when the component mounts
-  useEffect(() => {
-    fetchTodos();
-  }, []); // Empty dependency array means this runs once after the initial render
 
+  // Fetch todos when the component mounts or the user changes
   useEffect(() => {
-    const subscription = client.models.Todo.onCreate().subscribe({
-      next: (todoData) => {
-        // No `.data`, directly use `todoData`
-        const newTodo = todoData; // Assuming `todoData` is already the new Todo item
-
-        if (newTodo) {
-          setTodos((prevTodos) => [...prevTodos, newTodo]);
-        }
-      },
-      error: (error) => {
-        console.error('Subscription error:', error);
+    const sub = client.models.Todo.observeQuery().subscribe({
+      next: ({ items, isSynced }) => {
+        setTodos([...items]);
+        console.log('this is isSynced', isSynced);
       },
     });
-
-    return () => subscription.unsubscribe(); // Clean up the subscription
+    return () => sub.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      console.log('Fetched todos:', todos);
+      console.log('User:', user);
+    }
+  }, [todos, user]);
 
   const createTodo = async () => {
     const content = window.prompt('Enter todo content:');
@@ -70,7 +44,6 @@ function App() {
         owner: user.username, // Associate todo with the logged-in user
       });
       alert('Todo created successfully!');
-      fetchTodos(); // Refresh the todos after creation
     } catch (error) {
       console.error('Error creating todo:', error);
       alert('Failed to create todo.');
