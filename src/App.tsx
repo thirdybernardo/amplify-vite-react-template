@@ -11,15 +11,25 @@ function App() {
 
   // Fetch todos from API
   const fetchTodos = async () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { user } = useAuthenticator(); // Get the logged-in user's info
+
     try {
-      const { data: todos, errors } = await client.models.Todo.list();
-      if (errors) {
-        console.error('Error fetching todos:', errors);
-      } else {
+      const { data: todos, errors } = await client.models.Todo.list({
+        filter: {
+          owner: { eq: user.username }, // Only fetch todos that match the logged-in user's username
+        },
+      });
+
+      if (todos) {
         setTodos(todos);
       }
+
+      if (errors) {
+        console.error('Errors fetching todos:', errors);
+      }
     } catch (error) {
-      console.error('Failed to fetch todos:', error);
+      console.error('Error fetching todos:', error);
     }
   };
 
@@ -60,6 +70,7 @@ function App() {
         owner: user.username, // Associate todo with the logged-in user
       });
       alert('Todo created successfully!');
+      fetchTodos(); // Refresh the todos after creation
     } catch (error) {
       console.error('Error creating todo:', error);
       alert('Failed to create todo.');
