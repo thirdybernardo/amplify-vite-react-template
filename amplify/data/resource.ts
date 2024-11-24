@@ -8,6 +8,14 @@ const schema = a.schema({
       owner: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
+
+  UserTodo: a
+    .model({
+      content: a.string(),
+      isDone: a.boolean(),
+      owner: a.string(),
+    })
+    .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
 });
 
 // Used for code completion / highlighting when making requests from frontend

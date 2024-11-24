@@ -40,3 +40,62 @@
 .read-the-docs {
   color: #888;
 }
+
+.container {
+  display: flex;
+  flex-direction: row; /* Ensure columns are arranged in a row */
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.column {
+  width: 400px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.todos-column {
+  background-color: #f9f9f9;
+}
+
+.blank-column {
+  background-color: #fff;
+}
+
+.profile-column {
+  background-color: #eef6ff;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+button {
+  margin-left: 10px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 18px;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
