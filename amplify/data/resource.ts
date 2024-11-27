@@ -15,7 +15,7 @@ const schema = a.schema({
       isDone: a.boolean(),
       owner: a.string(),
     })
-    .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
+    .authorization((allow) => [allow.owner()]),
 });
 
 // Used for code completion / highlighting when making requests from frontend
