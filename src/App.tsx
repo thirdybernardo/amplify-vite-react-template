@@ -110,9 +110,9 @@ function App() {
       const todoupDelete: { id: string } = {
         id,
       };
-      await client.models.Todo.delete(todoupDelete); // Use the ID of the todo to delete
+      await client.models.UserTodo.delete(todoupDelete); // Use the ID of the todo to delete
       // After successful deletion, update the state to remove the deleted todo
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+      setUserTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
       alert('Todo deleted successfully!');
     } catch (error) {
       console.error('Error deleting todo:', error);
