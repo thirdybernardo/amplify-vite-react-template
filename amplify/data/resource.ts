@@ -7,7 +7,10 @@ const schema = a.schema({
       isDone: a.boolean(),
       owner: a.string(),
     })
-    .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
+    .authorization((allow) => [
+      allow.publicApiKey(),
+      allow.owner().to(['create', 'update', 'delete', 'read']),
+    ]),
 
   UserTodo: a
     .model({
@@ -15,7 +18,9 @@ const schema = a.schema({
       isDone: a.boolean(),
       owner: a.string(),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [
+      allow.owner().to(['create', 'update', 'delete', 'read']),
+    ]),
 });
 
 // Used for code completion / highlighting when making requests from frontend

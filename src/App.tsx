@@ -58,11 +58,7 @@ function App() {
     }
 
     try {
-      const { data: todoData, errors } = await client.models.UserTodo.list({
-        filter: {
-          owner: { eq: user.username }, // Fetch todos that belong to the logged-in user
-        },
-      });
+      const { data: todoData, errors } = await client.models.UserTodo.list();
 
       if (todoData) {
         // setTodos(todoData); // Set todos in the state
