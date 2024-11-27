@@ -16,11 +16,11 @@ const schema = a.schema({
     .model({
       content: a.string(),
       isDone: a.boolean(),
-      owner: a.string(),
+      owner: a
+        .string()
+        .authorization((allow) => [allow.owner().to(['read', 'delete'])]),
     })
-    .authorization((allow) => [
-      allow.owner().to(['create', 'update', 'delete', 'read']),
-    ]),
+    .authorization((allow) => [allow.owner()]),
 });
 
 // Used for code completion / highlighting when making requests from frontend

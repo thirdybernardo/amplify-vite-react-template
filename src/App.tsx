@@ -46,11 +46,16 @@ function App() {
       return;
     }
     try {
-      await client.models.UserTodo.create({
-        content,
-        isDone: false,
-        owner: user.username, // Associate todo with the logged-in user
-      });
+      await client.models.UserTodo.create(
+        {
+          content,
+          isDone: false,
+        },
+        {
+          authMode: 'userPool',
+        }
+      );
+
       alert('Todo created successfully!');
     } catch (error) {
       console.error('Error creating todo:', error);
