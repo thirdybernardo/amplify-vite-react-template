@@ -50,9 +50,11 @@ function App() {
         {
           content,
           isDone: false,
+          owner: user.username, // Associate todo with the logged-in user
         },
+
         {
-          authMode: 'userPool',
+          authMode: 'apiKey',
         }
       );
 
@@ -63,7 +65,7 @@ function App() {
     }
 
     try {
-      const { data: todoData, errors } = await client.models.UserTodo.list();
+      const { data: todoData, errors } = await client.models.UserTodo.list({});
 
       if (todoData) {
         // setTodos(todoData); // Set todos in the state

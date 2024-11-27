@@ -18,9 +18,11 @@ const schema = a.schema({
       isDone: a.boolean(),
       owner: a
         .string()
-        .authorization((allow) => [allow.owner().to(['read', 'delete'])]),
+        .authorization((allow) => [
+          allow.owner().to(['read', 'delete', 'create']),
+        ]),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 // Used for code completion / highlighting when making requests from frontend
