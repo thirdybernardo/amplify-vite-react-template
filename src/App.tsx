@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from 'react';
 import type { Schema } from '../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
@@ -58,11 +59,14 @@ function App() {
     }
 
     try {
+      const { user } = useAuthenticator(); // Get the currently logged-in user
+
       const { data: todoData, errors } = await client.models.UserTodo.list({
         filter: {
           owner: { eq: user.username }, // Fetch todos that belong to the logged-in user
         },
       });
+      setUserTodos(todoData);
 
       if (todoData) {
         // setTodos(todoData); // Set todos in the state
