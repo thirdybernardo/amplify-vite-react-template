@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from 'react';
 import type { Schema } from '../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
@@ -53,34 +52,31 @@ function App() {
         owner: user.username, // Associate todo with the logged-in user
       });
       alert('Todo created successfully!');
-      await fetchUserTodos();
     } catch (error) {
       console.error('Error creating todo:', error);
-      alert('Failed to create todo. 1');
+      alert('Failed to create todo.');
     }
-  };
-  // Function to update a todo item
-
-  const fetchUserTodos = async () => {
-    const { user } = useAuthenticator(); // Get the currently logged-in user
 
     try {
-      const { data, errors } = await client.models.UserTodo.list({
-        filter: { owner: { eq: user.username } }, // Filter by the logged-in user's username
+      const { data: todoData, errors } = await client.models.UserTodo.list({
+        filter: {
+          owner: { eq: user.username }, // Fetch todos that belong to the logged-in user
+        },
       });
+
+      if (todoData) {
+        // setTodos(todoData); // Set todos in the state
+        setUserTodos(todoData);
+      }
 
       if (errors) {
         console.error('Error fetching todos:', errors);
-        return;
       }
-
-      // Set the filtered todos in the state
-      setUserTodos(data);
     } catch (error) {
       console.error('Error fetching todos:', error);
     }
   };
-
+  // Function to update a todo item
   const updateTodo = (id: string) => {
     const newContent = window.prompt('Enter new content for the todo:');
     if (!newContent) {
@@ -124,21 +120,6 @@ function App() {
     }
   };
 
-  const deleteTodoUser = async (id: string) => {
-    try {
-      const todoupDelete: { id: string } = {
-        id,
-      };
-      await client.models.UserTodo.delete(todoupDelete); // Use the ID of the todo to delete
-      // After successful deletion, update the state to remove the deleted todo
-      setUserTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-      alert('Todo deleted successfully!');
-    } catch (error) {
-      console.error('Error deleting todo:', error);
-      alert('Failed to delete the todo.');
-    }
-  };
-
   return (
     <main className="container">
       {/* First Column: Todo List */}
@@ -162,8 +143,7 @@ function App() {
           <li key={todouser.id}>
             {todouser.content}
             <button onClick={() => updateTodo(todouser.id)}>Update</button>
-            <button>add item</button>
-            <button onClick={() => deleteTodoUser(todouser.id)}>Delete</button>
+            <button onClick={() => deleteTodo(todouser.id)}>Delete</button>
           </li>
         ))}
         <button onClick={createTodo}>+ new</button>

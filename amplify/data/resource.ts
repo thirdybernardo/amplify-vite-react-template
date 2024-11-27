@@ -8,6 +8,7 @@ const schema = a.schema({
       owner: a.string(),
     })
     .authorization((allow) => [
+      allow.publicApiKey(),
       allow.owner().to(['create', 'update', 'delete', 'read']),
     ]),
 
