@@ -23,6 +23,16 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const sub = client.models.UserTodo.observeQuery().subscribe({
+      next: ({ items, isSynced }) => {
+        setUserTodos([...items]);
+        console.log('this is isSynced', isSynced);
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (user) {
       console.log('Fetched todos:', todos);
       console.log('User:', user);
@@ -110,6 +120,21 @@ function App() {
     }
   };
 
+  const deleteTodoUser = async (id: string) => {
+    try {
+      const todoupDelete: { id: string } = {
+        id,
+      };
+      await client.models.UserTodo.delete(todoupDelete); // Use the ID of the todo to delete
+      // After successful deletion, update the state to remove the deleted todo
+      setUserTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+      alert('Todo deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+      alert('Failed to delete the todo.');
+    }
+  };
+
   return (
     <main className="container">
       {/* First Column: Todo List */}
@@ -132,8 +157,9 @@ function App() {
         {usertodos.map((todouser) => (
           <li key={todouser.id}>
             {todouser.content}
-            <button onClick={() => updateTodo(todouser.id)}>Update</button>{' '}
-            <button onClick={() => deleteTodo(todouser.id)}>Delete</button>
+            <button onClick={() => updateTodo(todouser.id)}>Update</button>
+            <button>add item</button>
+            <button onClick={() => deleteTodoUser(todouser.id)}>Delete</button>
           </li>
         ))}
         <button onClick={createTodo}>+ new</button>
