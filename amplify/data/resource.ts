@@ -19,10 +19,7 @@ const schema = a.schema({
       owner: a.string(),
     })
     //.authorization((allow) => [allow.publicApiKey(), allow.owner()]),
-    .authorization((allow) => [
-      allow.publicApiKey(),
-      allow.owner().to(['create', 'read', 'update']),
-    ]),
+    .authorization((allow) => [allow.owner().to(['create', 'read', 'update'])]),
 });
 
 // Used for code completion / highlighting when making requests from frontend

@@ -23,16 +23,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const sub = client.models.UserTodo.observeQuery().subscribe({
-      next: ({ items, isSynced }) => {
-        setUserTodos([...items]);
-        console.log('this is isSynced', isSynced);
-      },
-    });
-    return () => sub.unsubscribe();
-  }, []);
-
-  useEffect(() => {
     if (user) {
       console.log('Fetched todos:', todos);
       console.log('User:', user);
