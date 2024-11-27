@@ -50,6 +50,7 @@ function App() {
         {
           content,
           isDone: false,
+          owner: user.username,
         },
         {
           authMode: 'userPool',
@@ -79,6 +80,29 @@ function App() {
       alert('Failed to create todo.');
     }
   };
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const { data, errors } = await client.models.UserTodo.list({
+          filter: { owner: { eq: user.username } },
+        });
+
+        if (errors) {
+          console.error('Error fetching todos:', errors);
+          return;
+        }
+
+        setUserTodos(data);
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+      }
+    };
+
+    if (user) {
+      fetchTodos();
+    }
+  }, [user]);
 
   const deleteTodo = async (id: string) => {
     try {

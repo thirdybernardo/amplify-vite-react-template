@@ -5,6 +5,7 @@ const schema = a.schema({
     .model({
       content: a.string(),
       isDone: a.boolean(),
+      owner: a.string(),
     })
     // .authorization((allow) => [allow.publicApiKey(), allow.owner()]),
     .authorization((allow) => [
@@ -15,6 +16,7 @@ const schema = a.schema({
     .model({
       content: a.string(),
       isDone: a.boolean(),
+      owner: a.string(),
     })
     //.authorization((allow) => [allow.publicApiKey(), allow.owner()]),
     .authorization((allow) => [
