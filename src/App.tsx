@@ -53,34 +53,34 @@ function App() {
         owner: user.username, // Associate todo with the logged-in user
       });
       alert('Todo created successfully!');
+      await fetchUserTodos();
     } catch (error) {
       console.error('Error creating todo:', error);
-      alert('Failed to create todo.');
+      alert('Failed to create todo. 1');
     }
+  };
+  // Function to update a todo item
+
+  const fetchUserTodos = async () => {
+    const { user } = useAuthenticator(); // Get the currently logged-in user
 
     try {
-      const { user } = useAuthenticator(); // Get the currently logged-in user
-
-      const { data: todoData, errors } = await client.models.UserTodo.list({
-        filter: {
-          owner: { eq: user.username }, // Fetch todos that belong to the logged-in user
-        },
+      const { data, errors } = await client.models.UserTodo.list({
+        filter: { owner: { eq: user.username } }, // Filter by the logged-in user's username
       });
-      setUserTodos(todoData);
-
-      if (todoData) {
-        // setTodos(todoData); // Set todos in the state
-        setUserTodos(todoData);
-      }
 
       if (errors) {
         console.error('Error fetching todos:', errors);
+        return;
       }
+
+      // Set the filtered todos in the state
+      setUserTodos(data);
     } catch (error) {
       console.error('Error fetching todos:', error);
     }
   };
-  // Function to update a todo item
+
   const updateTodo = (id: string) => {
     const newContent = window.prompt('Enter new content for the todo:');
     if (!newContent) {
