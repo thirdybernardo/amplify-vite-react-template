@@ -22,15 +22,6 @@ function App() {
   const [usertodos, setUserTodos] = useState<UserTodo[]>([]);
   const { user, signOut } = useAuthenticator();
   const [selectedTodos, setSelectedTodos] = useState<UserTodo[]>([]); // Store the selected (clicked) todos
-  useEffect(() => {
-    AOS.init({
-      offset: 100,
-      duration: 800,
-      easing: 'ease-in-sine',
-      delay: 100,
-    });
-    AOS.refresh();
-  }, []);
 
   useEffect(() => {
     const sub = client.models.Todo.observeQuery().subscribe({
