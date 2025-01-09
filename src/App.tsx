@@ -3,8 +3,8 @@ import type { Schema } from '../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 // src/index.js or src/App.js
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+//import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 //import logo from './assets/white-logo.png';
 type Todo = Schema['Todo']['type'];
 type UserTodo = Schema['UserTodo']['type'];
